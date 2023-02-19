@@ -2,6 +2,7 @@ import 'package:chat_app/model/firebase_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'firebase_options.dart';
 import 'package:uuid/uuid.dart';
 import 'model/user_model.dart';
 import 'pages/home_page.dart';
@@ -11,7 +12,9 @@ var uuid = Uuid();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   User? currentUser = FirebaseAuth.instance.currentUser;
 
