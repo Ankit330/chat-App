@@ -2,6 +2,8 @@ import 'package:chat_app/main.dart';
 import 'package:chat_app/model/char_room_model.dart';
 import 'package:chat_app/model/message_model.dart';
 import 'package:chat_app/model/user_model.dart';
+import 'package:chat_app/utils/theme.dart';
+import 'package:chat_app/utils/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +26,6 @@ class ChatRoomPage extends StatefulWidget {
 }
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
-  Color backgroundColor = const Color(0xFF1F1A30);
-
   TextEditingController messageController = TextEditingController();
 
   void sendMessage() async {
@@ -62,12 +62,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    var we = MediaQuery.of(context).size.width;
     var he = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: MyTheme.backgroundColor,
       appBar: AppBar(
-        backgroundColor: backgroundColor,
+        backgroundColor: MyTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         title: Text(widget.targetUser.fullname.toString()),
@@ -127,14 +126,16 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                             Text(
                                               currentMessage.text.toString(),
                                               style: TextStyle(
-                                                  color: backgroundColor,
+                                                  color:
+                                                      MyTheme.backgroundColor,
                                                   fontSize: 17.2,
                                                   fontWeight: FontWeight.w500),
                                             ),
                                             Text(
                                               "   ",
                                               style: TextStyle(
-                                                  color: backgroundColor,
+                                                  color:
+                                                      MyTheme.backgroundColor,
                                                   fontSize: 17.2,
                                                   fontWeight: FontWeight.w500),
                                             ),
@@ -154,14 +155,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                             SizedBox(
                                               width: he * 0.002,
                                             ),
-                                            // Icon(
-                                            //   Icons.check,
-                                            //   color:
-                                            //       (currentMessage.seen == false)
-                                            //           ? Colors.blue
-                                            //           : backgroundColor,
-                                            //   size: 10,
-                                            // ),
                                           ],
                                         ),
                                       ],
@@ -170,24 +163,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                             );
                           });
                     } else if (snapshot.hasError) {
-                      return const Center(
-                        child: Text(
-                            "An error occured! Please check your internet connection. !!",
-                            style: TextStyle(color: Colors.grey, fontSize: 20)),
-                      );
+                      return showText(
+                          "An error occured! Please check your internet connection. !!");
                     } else {
-                      return const Center(
-                        child: Text("say hi to your new friend",
-                            style: TextStyle(color: Colors.grey, fontSize: 20)),
-                      );
+                      return showText("Say hey to your friend");
                     }
                   } else {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        color: Colors.grey,
-                      ),
-                    );
+                    return indicator();
                   }
                 }),
           )),
@@ -205,12 +187,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     child: TextField(
                   maxLines: null,
                   controller: messageController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none,
                       hintText: "Type Message",
-                      hintStyle: TextStyle(color: Colors.white)),
-                  style: const TextStyle(color: Colors.white),
+                      hintStyle: TextStyle(color: MyTheme.enabledtxt)),
+                  style: TextStyle(color: MyTheme.enabledtxt),
                 )),
                 CircleAvatar(
                   backgroundColor: Colors.grey[300],
@@ -221,8 +203,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                         },
                         icon: Icon(
                           Icons.send,
-                          color: backgroundColor,
-                          // size: 27,
+                          color: MyTheme.backgroundColor,
                         )),
                   ),
                 ),

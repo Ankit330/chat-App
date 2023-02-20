@@ -8,7 +8,7 @@ import 'model/user_model.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 
-var uuid = Uuid();
+var uuid = const Uuid();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
