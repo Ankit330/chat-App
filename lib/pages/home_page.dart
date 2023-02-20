@@ -23,7 +23,41 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(widget.firebaseUser.uid)
+        .update({"isonline": true});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.values) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.firebaseUser.uid)
+          .update({"isonline": true});
+    } else {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(widget.firebaseUser.uid)
+          .update({"isonline": false});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var he = MediaQuery.of(context).size.height;

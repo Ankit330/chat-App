@@ -60,6 +60,7 @@ class _SingupState extends State<Singup> {
           .then((value) async {
         String uid = value.user!.uid;
         UserModel newUser = UserModel(
+            isOnline: false,
             uid: uid,
             fullname: fullnameController.text.trim(),
             email: email,

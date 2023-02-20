@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chat_app/main.dart';
 import 'package:chat_app/model/char_room_model.dart';
 import 'package:chat_app/model/message_model.dart';
@@ -69,7 +71,42 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         backgroundColor: MyTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
-        title: Text(widget.targetUser.fullname.toString()),
+        title: Column(
+          children: [
+            Text(widget.targetUser.fullname.toString()),
+            StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(widget.targetUser.uid)
+                    .snapshots(),
+                builder: (BuildContext context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    if (snapshot.hasData) {
+                      DocumentSnapshot userSnapshot =
+                          snapshot.data as DocumentSnapshot;
+                      UserModel nweUserModel = UserModel.fromMap(
+                          userSnapshot.data() as Map<String, dynamic>);
+
+                      return (nweUserModel.isOnline!)
+                          ? Text(
+                              "online",
+                              style: TextStyle(
+                                  fontSize: 12, color: MyTheme.deaible),
+                            )
+                          : Text(
+                              "offline",
+                              style: TextStyle(
+                                  fontSize: 12, color: MyTheme.deaible),
+                            );
+                    } else {
+                      return Container();
+                    }
+                  } else {
+                    return Container();
+                  }
+                }),
+          ],
+        ),
       ),
       body: SafeArea(
           child: Column(
@@ -99,6 +136,16 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                             MessageModel currentMessage = MessageModel.fromMap(
                                 dataSnapshot.docs[index].data()
                                     as Map<String, dynamic>);
+                            if (!currentMessage.seen! &&
+                                currentMessage.sender !=
+                                    widget.firebaseUser.uid) {
+                              FirebaseFirestore.instance
+                                  .collection("chatrooms")
+                                  .doc(widget.chatRoom.chatroomid)
+                                  .collection("messages")
+                                  .doc(currentMessage.messageid)
+                                  .update({"seen": true});
+                            }
                             return Row(
                               mainAxisAlignment: (currentMessage.sender ==
                                       widget.userModel.uid)
@@ -155,6 +202,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                             SizedBox(
                                               width: he * 0.002,
                                             ),
+                                            (currentMessage.sender ==
+                                                    widget.firebaseUser.uid)
+                                                ? Icon(
+                                                    Icons.done_all,
+                                                    size: 13.0,
+                                                    color:
+                                                        (currentMessage.seen!)
+                                                            ? Colors.blue
+                                                            : MyTheme.deaible,
+                                                  )
+                                                : Container()
                                           ],
                                         ),
                                       ],
